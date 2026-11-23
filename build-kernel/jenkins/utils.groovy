@@ -72,14 +72,20 @@ void sonarQube(final Closure body) {
     }
 }
 
-void buildEnvironment(final Closure body) {
+void buildEnvironmentWithoutSSH(final Closure body) {
     bitbucketCredentials {
         gradleCredentials {
             npmCredentials {
-                sshAgent {
-                    body()
-                }
+                body()
             }
+        }
+    }
+}
+
+void buildEnvironment(final Closure body) {
+    buildEnvironmentWithoutSSH {
+        sshAgent {
+            body()
         }
     }
 }

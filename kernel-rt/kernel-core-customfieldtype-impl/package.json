@@ -1,6 +1,6 @@
 {
   "name": "@com.mgmtp.a12.kernel/kernel-core-customfieldtype-impl",
-  "version": "30.8.7-build.2026-09-07T08-17-41UTC.3",
+  "version": "30.8.7",
   "description": "kernel core custom field types",
   "scripts": {
     "lint": "npm run internal:eslint",
@@ -29,13 +29,13 @@
   "author": "mgm technology partners",
   "license": "(EUPL-1.2 OR LicenseRef-commercial)",
   "dependencies": {
-    "@com.mgmtp.a12.kernel/kernel-core-runtime-api-ts": "30.8.7-build.2026-09-07T08-17-41UTC.3"
+    "@com.mgmtp.a12.kernel/kernel-core-runtime-api-ts": "30.8.7"
   },
   "devDependencies": {
     "@com.mgmtp.a12.devtools/tsconfig": "^1.1.0",
     "@com.mgmtp.a12.devtools/prettier-config": "^1.1.0",
-    "@com.mgmtp.a12.kernel/kernel-eslint-config": "30.8.7-build.2026-09-07T08-17-41UTC.3",
-    "@com.mgmtp.a12.utils/utils-localization": "^7.2.0",
+    "@com.mgmtp.a12.kernel/kernel-eslint-config": "30.8.7",
+    "@com.mgmtp.a12.utils/utils-localization": "^7.2.2",
     "@cyclonedx/cyclonedx-npm": "^5.0.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.19.3",

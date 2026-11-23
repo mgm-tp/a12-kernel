@@ -1,6 +1,6 @@
 {
   "name": "@com.mgmtp.a12.kernel/kernel-core-parser-web",
-  "version": "30.8.7-build.2026-09-07T08-17-41UTC.3",
+  "version": "30.8.7",
   "description": "kernel core parser version in typescript",
   "scripts": {
     "lint": "npm run internal:eslint",
@@ -42,7 +42,7 @@
     "@com.mgmtp.a12.antlrcodeeditor/antlrcodeeditor-core": "^6.2.2",
     "@com.mgmtp.a12.devtools/tsconfig": "^1.1.0",
     "@com.mgmtp.a12.devtools/prettier-config": "^1.1.0",
-    "@com.mgmtp.a12.kernel/kernel-eslint-config": "30.8.7-build.2026-09-07T08-17-41UTC.3",
+    "@com.mgmtp.a12.kernel/kernel-eslint-config": "30.8.7",
     "@cyclonedx/cyclonedx-npm": "^5.0.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.19.3",

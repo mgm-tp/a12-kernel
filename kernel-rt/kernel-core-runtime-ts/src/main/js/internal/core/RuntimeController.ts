@@ -135,6 +135,21 @@ export abstract class RuntimeController {
 	protected readonly validationTime: Date;
 
 	protected readonly timeZone: string;
+	/**
+	 * Caches the parsed date per (format, isTeilbekannt, field value) for the lifetime of this
+	 * controller, i.e. for a single validation or computation run. Parsing is deterministic given
+	 * {@link timeZone} and the base year, and both are fixed for a controller instance.
+	 *
+	 * Without this cache the same field value is parsed again for every rule evaluation that reads
+	 * it. When rules iterate over large repeatabilities that adds up to millions of parses of a few
+	 * thousand distinct values, and date parsing then dominates the whole run.
+     * e.g. for A12-19111, caching here achieves a 12x-16x speedup for the overall validateAll call.
+	 *
+	 * The epoch milliseconds are stored rather than the {@link Date}, so that every caller still
+	 * receives its own {@link Date} instance (because Date is not immutable).
+     * A {@code null} entry means the value has an unknown year and yields {@link VkDate.NON_RELEVANT_DATE}.
+	 */
+	private readonly _dateValueCache: Map<string, number | null> = new Map<string, number | null>();
 
 	private static _bereichAlsZahlRegExp = /^(?:\d+)$/;
 
@@ -1408,28 +1423,48 @@ export abstract class RuntimeController {
 		if (!feldWert.hasValue || feldWert.isNichtPruefungsrelevant) {
 			return new VkDate(undefined, feldWert.isNichtAngegeben, feldWert.isNichtPruefungsrelevant);
 		}
-		const wert: string = feldWert.wert;
-		const format: string = formatDef.format;
-		const dateWithFormat: DateAndFormat = new DateAndFormat(wert, format, this.timeZone);
-		if (PartiallyKnownDatesUtil.isYearUnknown(dateWithFormat)) {
-			/* This should not happen as
-			 * 1. the parser is supposed to prevent the situation that this method is called for date fields with YEAR_OPTIONAL
-			 * 2. the method is only called with formally correct values
-			 * to prevent a ParseException in case that a parser check is missing, return a non relevant value
-			 */
-			return VkDate.NON_RELEVANT_DATE;
-		}
-		if (formatDef.isTeilbekannt) {
-			PartiallyKnownDatesUtil.replaceMonthAndYearIfUnknown(
-				dateWithFormat,
-				DateInterval.INTERVAL_START
-			);
-		}
-		const datum: Date = DateUtil.getValueAsDate(dateWithFormat, this.metaData.getBaseYearOrDefault());
-		return new VkDate(datum, feldWert.isNichtAngegeben, false);
+        const millis: number | null = this._millisForDatumFeldwert(feldWert.wert, formatDef.format, formatDef.isTeilbekannt);
+        return millis === null
+            ? VkDate.NON_RELEVANT_DATE
+            : new VkDate(new Date(millis), feldWert.isNichtAngegeben, false);
 	}
 
-	public feldWertAlsDateRange(idx: IterationState, entity: RtIdentifierTemplate): VkDateRange;
+    private _millisForDatumFeldwert(wert: string, format: string, isTeilbekannt: boolean): number | null {
+        const cacheKeySeparator = "\u0000";
+        const cacheKey: string =
+            wert + cacheKeySeparator +
+            format + cacheKeySeparator +
+            (isTeilbekannt ? "T" : "F");
+        const cachedMillis: number | null | undefined = this._dateValueCache.get(cacheKey);
+        if (cachedMillis !== undefined) {
+            return cachedMillis;
+        }
+        const millis = this._millisForDatumFeldWertUncached(wert, format, isTeilbekannt);
+        this._dateValueCache.set(cacheKey, millis);
+        return millis;
+    }
+
+	private _millisForDatumFeldWertUncached(wert: string, format: string, isTeilbekannt: boolean): number | null {
+        const dateWithFormat: DateAndFormat = new DateAndFormat(wert, format, this.timeZone);
+        if (PartiallyKnownDatesUtil.isYearUnknown(dateWithFormat)) {
+            /* This should not happen as
+             * 1. the parser is supposed to prevent the situation that this method is called for date fields with YEAR_OPTIONAL
+             * 2. the method is only called with formally correct values
+             * to prevent a ParseException in case that a parser check is missing, return a non relevant value
+             */
+            return null;
+        }
+        if (isTeilbekannt) {
+            PartiallyKnownDatesUtil.replaceMonthAndYearIfUnknown(
+                dateWithFormat,
+                DateInterval.INTERVAL_START
+            );
+        }
+        const datum: Date = DateUtil.getValueAsDate(dateWithFormat, this.metaData.getBaseYearOrDefault());
+        return datum.getTime();
+    }
+
+    public feldWertAlsDateRange(idx: IterationState, entity: RtIdentifierTemplate): VkDateRange;
 	public feldWertAlsDateRange(id: RtInternalIdentifier): VkDateRange;
 	public feldWertAlsDateRange(
 		idxOrId: IterationState | RtInternalIdentifier,

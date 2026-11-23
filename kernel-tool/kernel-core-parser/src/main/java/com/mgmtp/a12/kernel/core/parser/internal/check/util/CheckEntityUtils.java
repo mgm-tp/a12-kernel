@@ -172,10 +172,26 @@ public class CheckEntityUtils extends CheckImplAbstractClass {
 	private void checkParsableToNumber(Set<String> values, String opName, EntityRef ref, EntitySpecContext ctx) {
 		for (String v : values) {
 			if (v.replace(".", "").replace("-", "").length() > MAX_ALLOWED_DIGITS
-					|| !NumberUtils.isParsable(v)) {
+					|| !numberUtilsParsableAs320(v)) {
 				throwErrorNoConvertInNumber(opName, ref, ctx);
 			}
 		}
+	}
+
+	/**
+	 *
+	 * the a behavioural change from org.apache.commons:commons-lang 3.20.0 -> 3.21.0 caused out of bounds exceptions
+	 * so this method retains 3.20 behaviour (as minimal fix)
+	 *
+	 */
+	private boolean numberUtilsParsableAs320(String str){
+		if (StringUtils.isEmpty(str)) {
+			return false;
+		}
+		if (str.charAt(str.length() - 1) == '.') {
+			return false;
+		}
+		return NumberUtils.isParsable(str);
 	}
 
 	private void checkStringIsConvertableToNumber(EntityRef ref, String opName, ParserRuleContext ctx, IStringType t) {

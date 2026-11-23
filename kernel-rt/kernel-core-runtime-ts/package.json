@@ -1,6 +1,6 @@
 {
   "name": "@com.mgmtp.a12.kernel/kernel-core-runtime-ts",
-  "version": "30.8.7-build.2026-09-07T08-17-41UTC.3",
+  "version": "30.8.7",
   "description": "kernel core runtime",
   "scripts": {
     "lint": "npm run internal:eslint",
@@ -29,16 +29,16 @@
   "author": "mgm technology partners",
   "license": "(EUPL-1.2 OR LicenseRef-commercial)",
   "dependencies": {
-    "@com.mgmtp.a12.kernel/kernel-core-runtime-api-ts": "30.8.7-build.2026-09-07T08-17-41UTC.3",
+    "@com.mgmtp.a12.kernel/kernel-core-runtime-api-ts": "30.8.7",
     "big.js": "^7.0.1"
   },
   "devDependencies": {
     "@com.mgmtp.a12.devtools/tsconfig": "^1.1.0",
     "@com.mgmtp.a12.devtools/prettier-config": "^1.1.0",
-    "@com.mgmtp.a12.kernel/kernel-eslint-config": "30.8.7-build.2026-09-07T08-17-41UTC.3",
+    "@com.mgmtp.a12.kernel/kernel-eslint-config": "30.8.7",
     "@com.mgmtp.a12.utils/utils-collections": "^6.2.0",
-    "@com.mgmtp.a12.utils/utils-localization": "^7.2.0",
-    "@com.mgmtp.a12.utils/utils-logging": "^6.2.0",
+    "@com.mgmtp.a12.utils/utils-localization": "^7.2.2",
+    "@com.mgmtp.a12.utils/utils-logging": "^6.2.2",
     "@cyclonedx/cyclonedx-npm": "^5.0.0",
     "@types/big.js": "^6.2.2",
     "@types/luxon": "^3.7.1",

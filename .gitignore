@@ -17,4 +17,5 @@ out/
 **/.idea/
 
 cyclonedx.json
+cyclonedx-unfiltered.json
 package.json.backup

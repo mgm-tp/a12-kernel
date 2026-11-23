@@ -67,7 +67,7 @@ import jakarta.validation.constraints.NotNull;
  * Strings wird geprüft, ob eine Ziffernfolge definiert wurde, d.h. das Muster [0-9]+. Dies ist zwar
  * sehr restriktiv, andere Überprüfungen lohnen aber nicht den Aufwand. Bei Enumerationen wird
  * geprüft, dass alle Werte, ggf. Kategorienwerte, eine Länge {@literal <=} max Länge haben und in eine Zahl umwandelbar
- * sind (NumberUtils.isParsable) {@link ParserErrorTypesEnum#MVK_NO_CONVERT_IN_NUMBER}
+ * sind (CheckEntityUtils.NumberUtilsParsableAs320) {@link ParserErrorTypesEnum#MVK_NO_CONVERT_IN_NUMBER}
  * </ul>
  */
 public class CheckFeldOpImpl extends CheckImplAbstractClass {
@@ -139,7 +139,7 @@ public class CheckFeldOpImpl extends CheckImplAbstractClass {
 		return values.stream()
 				.filter(value -> value.contains("."))
 				.map(value -> value.split("\\."))
-				// we know that the array length is always 2, since NumberUtils.isParsable does not allow inputs which lead to bigger or smaller arrays
+				// we know that the array length is always 2, since CheckEntityUtils.NumberUtilsParsableAs320 does not allow inputs which lead to bigger or smaller arrays
 				.mapToInt(array -> array[1].length())
 				.max()
 				.orElse(0);
